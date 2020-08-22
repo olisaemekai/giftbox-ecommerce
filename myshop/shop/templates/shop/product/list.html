@@ -1,0 +1,343 @@
+{% extends "shop/base.html" %} {% load static %} {% block title %} {% if category %} {{category.name}} {% else %} Products {% endif %} {% endblock title %} {% block content %}
+
+<div class="container">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark mt-3 mb-5">
+
+    <!-- Navbar brand -->
+    <span class="navbar-brand">Categories:</span>
+
+    <!-- Collapse button -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
+      aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="basicExampleNav">
+
+      <ul class="navbar-nav mr-auto">
+          <!-- <a class="nav-link" href="#">All
+            <span class="sr-only">(current)</span>
+          </a> -->
+        
+        <li class="nav-item active">
+          <a href="{% url 'shop:product_list' %}" class="nav-link">All</a> <!-- this should be within the class of the anchor tag{% if not category %} bg-primary text-white{% endif %} -->
+        </li>
+        {% for category in categories %}
+        <li class="nav-item dropdown">
+          <a href="{{ category.get_absolute_url }}" class="nav-link dropdown-toggle" data-toggle="dropdown">{{ category.name }}</a> <!--this should be in the class of this anchor tag {% if category.slug == c.slug %}bg-primary text-white{% endif %} -->
+          <div class="dropdown-menu">
+            {% for tag in category.tags.all %}
+              <a class="dropdown-item" href="{{tag.get_absolute_url}}">{{tag|capfirst}}</a>
+            {% endfor %}
+          </div>
+        </li>
+        {% endfor %}
+    
+      </ul>
+      <!-- Links -->
+
+      <form class="form-inline" action='{% url "shop:search" %}' method="get">
+        <div class="form-group my-0 ">
+          <input class="form-control mr-sm-2 bg-dark text-white" name="q" type="text" placeholder="Search" aria-label="Search">
+        </div>
+      </form>
+    </div>
+    <!-- Collapsible content -->
+
+  </nav>
+</div>
+
+  {% comment %} <div class="container">
+      <div id="demo" class="carousel slide" data-ride="carousel">
+        <ul class="carousel-indicators">
+          
+            {% for x in first_item %}
+              <li data-target="#demo" data-slide-to="{{forloop.counter}}" {% if forloop.first %} class='active' {% endif %}></li> 
+            {% endfor %}
+        </ul>
+        <!-- Indicators -->
+        <!-- <ul class="carousel-indicators">
+          <li data-target="#demo" data-slide-to="0" class="active"></li>
+          <li data-target="#demo" data-slide-to="1"></li>
+          <li data-target="#demo" data-slide-to="2"></li>
+        </ul> -->
+        {% for item in first_item %}
+          <!-- The slideshow -->
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <img src="{% if item.image %} {{item.image.url}} {% else %} {% static 'img/no_image.png' %}{% endif %}" alt="Los Angeles">
+            </div>
+            
+          </div>
+        {% endfor %}
+        <!-- Left and right controls -->
+        <a class="carousel-control-prev" href="#demo" data-slide="prev">
+          <span class="carousel-control-prev-icon"></span>
+        </a>
+        <a class="carousel-control-next" href="#demo" data-slide="next">
+          <span class="carousel-control-next-icon"></span>
+        </a>
+      </div>
+</div> {% endcomment %}
+
+
+<div class="container">
+  <!-- <div class='border-left border-left-dark mb-4 px-2' style='border-left:rgb(53, 58, 49) 10px solid !important'><h3>Great Custom Boxes</h3></div> -->
+  <h2 class="text-uppercase text-center font-weight-bold mb-4">Great Custom Boxes </h2>
+  <div class="row mb-3">
+      {% for box in custom_boxes %}
+      <div class="col-lg-3 col-md-6 mb-4">
+          <div class="shadow-sm px-1">
+            <h5 class="font-weight-bold text-primary text-center">₦{{box.price}}</h5>
+
+            <div>
+              <a href="{{ box.get_absolute_url }}"><img class="" width="100%" height="auto" src="{% if box.image %}{{ box.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}" alt=""></a>
+              
+              <div class="card-body text-center">
+                <p class="card-title"> {{box.description|truncatewords:20}} </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+  </div>
+</div>
+
+
+{% comment %} <div class="container">
+  <div class='border-left border-left-dark mb-4 px-2' style='border-left:rgb(53, 58, 49) 10px solid !important'><h3>Featured products</h3></div>
+  <div class="row mb-3">
+      {% for product in products %}
+      <div class="col-lg-3 col-md-6 mb-4">
+          <div class="shadow-sm px-1">
+            <div>
+              <a href="{{ product.get_absolute_url }}"><img class="" width="100%" height="auto" src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}" alt=""></a>
+              
+              <div class="card-body text-center">
+                <h5 class="card-title">
+                  <a href="{{ product.get_absolute_url }}" class="text-capitalize font-weight-bold text-dark">{{product.name}}</a>
+                </h5>
+                <h6 class="font-weight-bold text-primary">₦{{product.price}}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+  </div>
+
+  <div class="row mb-3">
+    {% for product in products %}
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="shadow-sm">
+          <a href="{{ product.get_absolute_url }}"><img class="" width="100%" height="auto" src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}" alt=""></a>
+          
+          <div class="card-body text-center">
+            <h5 class="card-title">
+              <a href="{{ product.get_absolute_url }}" class="text-capitalize font-weight-bold text-dark">{{product.name}}</a>
+            </h5>
+            <h6 class="font-weight-bold text-primary">₦{{product.price}}</h6>
+          </div>
+        </div>
+    </div>
+    {% endfor %}
+  </div>
+  
+  <!-- <div class="row">
+    {% for product in products %}
+      <div class=" shadow-sm col-md-6 mb-4">
+          <div class="">
+            <div class="view overlay">
+              <a href="{{ product.get_absolute_url }}"><img class="card-img-top" src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}" alt=""></a>
+            </div>
+            
+            <div class="card-body text-center">
+              <h3 class="card-title">
+                <a href="{{ product.get_absolute_url }}" class="text-capitalize font-weight-bold text-dark">{{product.name}}</a>
+              </h3>
+              <h4 class="font-weight-bold text-primary">#{{product.price}}</h4>
+            </div>
+          </div>
+        </div>
+    {% endfor %}
+  </div> -->
+</div> {% endcomment %}
+
+
+<div class="container my-4">
+  <hr class="mb-5"/>
+
+  <div class='my-3'>
+    <h3 class="text-uppercase text-center font-weight-bold">Customize your box(es) </h3>
+    <h5 class="text-success text-center">Choose your box content/gifts</h5>
+  </div>
+
+    <!-- Tag Display with Flexbox -->
+    <div class="row">
+        <!-- Gadgets -->
+        <div class="col-lg-4">
+          <h5 class="text-center">Gadgets</h5>
+          <div class="d-flex flex-wrap justify-content-around align-items-center border rounded-lg pb-4 mb-3">
+            {% for tag in gadgets%}
+              <div class='p-2' style='max-width:32%; height: auto;'>
+                <a href="{{tag.get_absolute_url}}">
+                  <img class="" width=100%  src="{% if tag.image %}{{ tag.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}" alt="">
+                </a>
+                <div class="text-center"> {{tag.name|capfirst}}</div>
+              </div>
+            {% endfor %}
+          </div> 
+        </div>
+
+        <!-- Accessories -->
+        
+        <div class="col-lg-4">
+          <h5 class="text-center">Accessories</h5>
+          <div class="d-flex flex-wrap justify-content-around align-items-center border rounded-lg pb-4 mb-3">
+            {% for tag in accessories %}
+              <div class='p-2' style='max-width:32%; height: auto;'>
+                <a href="{{tag.get_absolute_url}}">
+                  <img class="" width=100%  src="{% if tag.image %}{{ tag.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}" alt="">
+                </a>
+                <div class="text-center"> {{tag.name|capfirst}}</div>
+              </div>
+            {% endfor %}
+          </div> 
+        </div>
+
+        
+        <!-- Fashion -->
+        <div class="col-lg-4">
+          <h5 class="text-center">Fashion</h5>
+          <div class="d-flex flex-wrap justify-content-around align-items-center border rounded-lg pb-4 mb-3">
+            {% for tag in fashion %}
+              <div class='p-2' style='max-width:32%; height:auto;'>
+                <a href="{{tag.get_absolute_url}}">
+                  <img class="" width=100%  src="{% if tag.image %}{{ tag.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}" alt="">
+                </a>
+                <div class="text-center"> {{tag.name|capfirst}}</div>
+              </div>
+            {% endfor %}
+          </div> 
+        </div>
+    </div>
+  
+    <div class="row">
+      <!-- Fragrances -->
+      <div class="col-lg-6"> 
+        <h5 class="text-center">Fragrances</h5>
+        <div class="d-flex flex-wrap justify-content-around align-items-center border rounded-lg p-3 mb-4">
+          {% for tag in fragrances %}
+          <div class="" style = 'max-width:32%; height: auto;'>
+              <a href="{{tag.get_absolute_url}}">
+                <img class="" width=100% src="{% if tag.image %}{{ tag.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}" alt="">
+              </a>
+              <div class="text-center"> {{tag.name|capfirst}}</div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+      
+      <!-- Edibles -->
+      <div class="col-lg-6"> 
+        <h5 class="text-center">Edibles</h5>
+        <div class="d-flex flex-wrap justify-content-around align-items-center border rounded-lg p-3 mb-4">
+          {% for tag in edibles%}
+          <div class="" style = 'max-width:25%'>
+              <a href="{{tag.get_absolute_url}}">
+                <img class="" width=100%  src="{% if tag.image %}{{ tag.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}" alt="">
+              </a>
+              <div class="text-center"> {{tag.name|capfirst}}</div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <!-- Tag Diplay with float -->
+    {% comment "" %}
+      <div class="row">
+        <!-- Gadgets -->
+        <div class="col-md-4">
+            <h5 class="text-center">Gadgets</h5>
+            <div class="clearfix border rounded-lg p-3 mb-4">
+              {% for tag in gadgets%}
+                <div class="float-left" style = 'max-width:32%; max-height:32%'>
+                  <a href="{{tag.get_absolute_url}}">
+                    <img class="" width=100% height="100%" src="{% if tag.image %}{{ tag.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}" alt="">
+                  </a>
+                  <div class="text-center"> {{tag.name|capfirst}}</div>
+                </div>
+              {% endfor %}
+            </div> 
+          </div>
+
+          <!-- Accessories -->
+          <div class="col-md-4"> 
+            <h5 class="text-center">Accessories</h5>
+            <div class="clearfix border rounded-lg p-3 mb-4">
+              {% for tag in accessories%}
+              <div class="float-left" style = 'max-width:32%'>
+
+                  <a href="{{tag.get_absolute_url}}">
+                    <img class="" width=100% height="auto" src="{% if tag.image %}{{ tag.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}" alt="">
+                  </a>
+                  <div class="text-center"> {{tag.name|capfirst}}</div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Fashion -->
+          <div class="col-md-4"> 
+            <h5 class="text-center">Fashion</h5>
+            <div class="clearfix border rounded-lg p-3 mb-4">
+              {% for tag in fashion %}
+              <div class="float-left" style = 'max-width:32%'>
+                  <a href="{{tag.get_absolute_url}}">
+                    <img class="" width=100% height="auto" src="{% if tag.image %}{{ tag.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}" alt="">
+                  </a>
+                  <div class="text-center"> {{tag.name|capfirst}}</div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+
+      </div>
+
+      <div class="row">
+        <!-- Fragrances -->
+        <div class="col-md-6"> 
+          <h5 class="text-center">Fragrances</h5>
+          <div class="clearfix border rounded-lg p-3 mb-4">
+            {% for tag in fragrances %}
+            <div class="float-left" style = 'max-width:32%'>
+                <a href="{{tag.get_absolute_url}}">
+                  <img class="" width=100% height="auto" src="{% if tag.image %}{{ tag.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}" alt="">
+                </a>
+                <div class="text-center"> {{tag.name|capfirst}}</div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+        
+        <!-- Edibles -->
+        <div class="col-md-6"> 
+          <h5 class="text-center">Edibles</h5>
+          <div class="clearfix border rounded-lg p-3 mb-4">
+            {% for tag in edibles%}
+            <div class="float-left" style = 'max-width:25%'>
+                <a href="{{tag.get_absolute_url}}">
+                  <img class="" width=100% height="auto" src="{% if tag.image %}{{ tag.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}" alt="">
+                </a>
+                <div class="text-center"> {{tag.name|capfirst}}</div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    {% endcomment %}
+    
+
+    
+</div>
+{% endblock content %}

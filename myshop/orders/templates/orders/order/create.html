@@ -1,0 +1,58 @@
+{% extends "shop/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+    Checkout
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h2 class="my-5 h2 text-center">Checkout form</h2>
+        <!-- <div class="order-info"> -->
+        <div class="row">
+            <div class="col-md-8 mb-4">
+                <!-- <form action="." method="post" class="order-form"> -->
+                <div class="card p-4">
+
+                    <form action="." method="post">
+                        {{ form|crispy }}
+                        <button type="submit" class="btn btn-primary form-control">Place order</button>
+                        {% csrf_token %}
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+
+                <ul class="card p-4">
+                    <h4>Your order</h4>
+                    {% for item in cart %}
+                        
+                    <li class="d-flex justify-content-between pb-1 ml-2">
+                            
+                           {{ item.quantity }}x {{ item.product.name }}
+                            
+                            <span class="pull-right">₦{{ item.total_price }}</span>
+                        </li>
+                    {% endfor %}
+                    <hr>
+                    {% if cart.coupon %}
+                    <li class="d-flex justify-content-between pb-1 ml-2">
+                    "{{cart.coupon.code}}", ({{cart.coupon.discount}}% off)
+                    <span>- ₦{{cart.get_discount|floatformat:"2"}}</span>
+                    </li>
+                    {% endif %}
+                    <hr>
+            
+                    <div class="row">
+                        <div class="col ml-2 font-weight-bold">Total: </div>
+                        <div class="col text-right font-weight-bold">₦{{ cart.get_total_price_after_discount|floatformat:'2'}}</div>
+                    </div>
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

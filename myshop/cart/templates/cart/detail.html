@@ -1,0 +1,194 @@
+{% extends "shop/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    Your shopping cart
+{% endblock %}
+
+{% block content %}
+    
+    <div class="container">
+        <div class="table-responsive">
+            <h2 class="py-4 text-center">Your custom box items</h2>
+            <table class="table table-striped table-hover mb-4"><!-- you may at .cart to the class-->
+                <thead class="thead-dark">
+                    <tr class="text-white">
+                    <th scope="col">Image</th>
+                    <th scope="col">Product</th>
+                    <th scope="col">Quantity</th>
+                    <!-- <th scope="col text-center">Remove</th> -->
+                    <th class="text-center" scope="col">Unit price</th>
+                    <th class="text-center" scope="col">Total Price</th>
+                    <th scope="col text-center"></th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart %}
+                        {% with product=item.product %}
+                            <tr class="">
+                            <td>
+                            <a href="{{ product.get_absolute_url }}">
+                            <img src="{% if product.image %}{{ product.image.url }} {% else %}{% static 'img/no_image.png' %}{% endif %}" style="width:100px;">
+                            </a>
+                            </td>
+                            <td class="">{{ product.name }}</td>
+                            <td>
+                                <form action="{% url 'cart:cart_add' product.id %}" method='post'>
+                                    {{ item.update_quantity_form.quantity }}
+                                    {{ item.update_quantity_form.update }}
+                                    <button class="btn btn-primary btn-sm" type="submit">Update</button>
+                                    {% csrf_token %}
+                                    
+                                </form>
+                                                    
+                                <!-- {{item.quantity}} -->
+                            
+                            </td>
+                            <!-- <td><a href="{% url 'cart:cart_remove' product.id %}" >Remove</a></td> -->
+                            <td class="text-center">₦{{ item.price }}</td>
+                            <td class="num text-center">₦{{ item.total_price }} 
+                                <!-- <a style='color: red;' href="{% url 'cart:cart_remove' product.id %}"><i class='fas fa-trash float-right'></i></a> -->
+                            </td>
+                            <td class="text-center"><a style='color: red;' href="{% url 'cart:cart_remove' product.id %}"><i class='fas fa-trash'></i></a></td>
+                            </tr>
+                        {% endwith %}
+                    {% endfor %}
+                    <!-- <tr class="total">
+                        <td>Total</td>
+                        <td colspan="4"></td>
+                        <td class="num">${{ cart.get_total_price }}</td>
+                    </tr> -->
+                </tbody>
+                <tfoot>
+                    <!-- <tr class='text-white bg-dark' > 
+                        <td>Total</td>
+                        <td colspan="3"></td>
+                        <td class="text-center">${{ cart.get_total_price }}</td>
+                    </tr> -->
+
+                    {% if cart.coupon %}
+                        <tr class="text-white bg-dark">
+                            <td>Subtotal</td>
+                            <td colspan="3"></td>
+                            <td class="text-center"> {{cart.get_total_price|floatformat:"2" }}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                '{{ cart.coupon.code}}' coupon
+                                ({{ cart.coupon.discount }}% off)
+                            </td>
+                            <td colspan="3"></td>
+                            <td class="text-center">-(₦{{cart.get_discount|floatformat:'2'}})</td>
+                            <td></td>
+                        </tr>
+                    {% endif %}
+                    <tr class="text-white bg-dark">
+                        <td>Total</td>
+                        <td colspan="3"></td>
+                        <td class="text-center">
+                            ₦{{cart.get_total_price_after_discount|floatformat:"2"}}
+                        </td>
+                        <td></td>
+                    </tr>
+
+                </tfoot>
+            </table>
+
+            <p>Apply a coupon:</p>
+            <form action="{% url 'coupons:apply' %}" method="post">
+                {{coupon_apply_form|crispy}}
+                <!-- <input type="submit" value="Apply"> -->
+                <button class="btn btn-primary" type="submit">Apply</button>
+                {% csrf_token %}
+            </form>
+
+    
+            <p class="text-right">
+                <a href="{% url 'shop:product_list' %}" class="btn btn-warning">Continue shopping</a>
+               {% if cart %}
+                <a href="{% url 'orders:order_create' %}" class="btn btn-primary">Checkout</a> <!--style="background: #5993bb;"-->
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    
+    {% comment %} <div class="container">
+        <div class="table-responsive">
+            <h2 class="py-4">Your shopping cart</h2>
+            <table class="table table-hover"><!-- you may at .cart to the class-->
+                <thead>
+                    <tr >
+                        <th scope="col">#</td>
+                        <th scope="col">Image</th>
+                        <th scope="col">Product</th>
+                        <th scope="col">Quantity</th>
+                        <!-- <th class="text-center">Remove</th> -->
+                        <th class="text-center" scope="col">Unit price</th>
+                        <th class="text-center" scope="col">Total Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart %}
+                        {% with product=item.product %}
+                            <tr class="ty-auto">
+                                <td scope="row">{{forloop.counter}}</td>
+                                <td>
+                                <a href="{{ product.get_absolute_url }}">
+                                <img src="{% if product.image %}{{ product.image.url }} {% else %}{% static 'img/no_image.png' %}{% endif %}" style="width: 100px;">
+                                </a>
+                                </td>
+                                <td class="">{{ product.name }}</td>
+                                <td>
+                                    <form action="{% url 'cart:cart_add' product.id %}" method='post'>
+                                        {{ item.update_quantity_form.quantity }}
+                                        {{ item.update_quantity_form.update }}
+                                        <input class="btn btn-primary" type="submit" value="Update">
+                                        {% csrf_token %}
+                                    </form>
+                                    <!-- {{item.quantity}} -->
+                                
+                                </td>
+                                <!-- <td><a href="{% url 'cart:cart_remove' product.id %}">Remove</a></td> -->
+                                <td class="text-center">${{ item.price }}</td>
+                                <td class="num text-center">${{ item.total_price }} 
+                                    <a style='color: red;' href="{% url 'cart:cart_remove' product.id %}"><i class='fas fa-trash float-right'></i></a>
+                                </td>
+                            </tr>
+                        {% endwith %}
+                    {% empty%}
+                    <tr>
+                        <td colspan="5">Your cart is empty</td>
+                    </tr>
+                    <tr>
+                    <td colspan="5">
+                        <a href="/" class='btn btn-primary float-right'>Continue shopping</a>
+                    </td>
+
+                    {% endfor %}
+                    <!-- <tr class="total">
+                        <td>Total</td>
+                        <td colspan=""></td>
+                        <td class="num">${{ cart.get_total_price }}</td>
+                    </tr> -->
+                </tbody>
+                <tfoot>
+                    <tr class='' >
+                        <td>Total</td>
+                        <td colspan="4"></td>
+                        <td class="text-center">${{ cart.get_total_price }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        
+            <p class="text-right">
+                <a href="{% url 'shop:product_list' %}" class="btn
+                btn-warning text-white">Continue shopping</a>
+                <a href="{% url 'orders:order_create' %}" class="btn text-white btn-primary"  >Checkout</a> <!--style="background: #5993bb;"-->
+            </p>
+        </div>
+    </div>
+    {% endcomment %}
+{% endblock %}
