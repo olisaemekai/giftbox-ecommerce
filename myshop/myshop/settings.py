@@ -144,7 +144,7 @@ SAVED_SESSION_ID = 'saved_items'
 # Braintree settings
 BRAINTREE_MERCHANT_ID = 'mpgff82bgvbjkp7c' # Merchant ID
 BRAINTREE_PUBLIC_KEY = '8xr869nwyrr2py5f' # Public Key
-BRAINTREE_PRIVATE_KEY = 'b7f77acf29f9681f48e727a7ea5e0910' # Private key
+BRAINTREE_PRIVATE_KEY = 'Private key' # Private key
 
 from braintree import Configuration, Environment
 Configuration.configure(
